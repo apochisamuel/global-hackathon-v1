@@ -1,38 +1,75 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Moodify Live</title>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Moodify Live — Local Demo</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-  <h1>Moodify Live 🎧</h1>
+  <header>
+    <h1>Moodify Live 🎧 (Local-only Demo)</h1>
+    <p class="tagline">Emotion → music (local samples, crossfaded)</p>
+  </header>
 
-  <div class="camera-container">
-    <video id="video" width="400" height="300" autoplay></video>
-    <p id="emotion-text">Detecting mood...</p>
-  </div>
+  <main>
+    <section class="camera-container">
+      <video id="video" width="480" height="360" autoplay muted playsinline></video>
+      <p id="emotion-text">Detecting mood...</p>
+    </section>
 
-  <div class="controls">
-    <label>Mode:</label>
-    <select id="mode">
-      <option value="match">Match Mood</option>
-      <option value="lift">Lift Mood</option>
-    </select>
+    <section class="controls">
+      <div class="control-group">
+        <label for="mode">Mode:</label>
+        <select id="mode">
+          <option value="match">Match Mood</option>
+          <option value="lift">Lift Mood</option>
+        </select>
+      </div>
 
-    <label>Override Mood:</label>
-    <select id="manualMood">
-      <option value="">Auto Detect</option>
-      <option value="happy">Happy</option>
-      <option value="sad">Sad</option>
-      <option value="angry">Angry</option>
-      <option value="neutral">Neutral</option>
-      <option value="surprise">Surprise</option>
-    </select>
-  </div>
+      <div class="control-group">
+        <label for="manualMood">Override Mood:</label>
+        <select id="manualMood">
+          <option value="">Auto Detect</option>
+          <option value="happy">Happy</option>
+          <option value="sad">Sad</option>
+          <option value="angry">Angry</option>
+          <option value="neutral">Neutral</option>
+          <option value="surprise">Surprise</option>
+          <option value="fear">Fear</option>
+          <option value="disgust">Disgust</option>
+        </select>
+      </div>
 
-  <iframe id="music-player" width="400" height="200" allow="autoplay; clipboard-write; encrypted-media;"></iframe>
+      <div class="control-group">
+        <button id="startBtn">Start Session ▶️</button>
+        <div id="audio-hint" class="hint">Click "Start Session" to enable audio playback.</div>
+      </div>
+    </section>
+
+    <section class="music-section">
+      <h2>Now Playing 🎶</h2>
+
+      <!-- Two audio elements for crossfade -->
+      <audio id="audioA" preload="auto"></audio>
+      <audio id="audioB" preload="auto"></audio>
+
+      <div class="track-info">
+        <p id="now-song">Now: —</p>
+        <p id="next-song">Next: —</p>
+        <p id="playback-status" class="hint hidden"></p>
+      </div>
+
+      <div class="queue-wrap">
+        <h3>Upcoming Queue</h3>
+        <ul id="queue-list"></ul>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>Local-only demo — Moodify Live</p>
+  </footer>
 
   <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
