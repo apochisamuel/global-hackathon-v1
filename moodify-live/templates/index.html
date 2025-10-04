@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Moodify Live</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <h1>Moodify Live 🎧</h1>
+
+  <div class="camera-container">
+    <video id="video" width="400" height="300" autoplay></video>
+    <p id="emotion-text">Detecting mood...</p>
+  </div>
+
+  <div class="controls">
+    <label>Mode:</label>
+    <select id="mode">
+      <option value="match">Match Mood</option>
+      <option value="lift">Lift Mood</option>
+    </select>
+
+    <label>Override Mood:</label>
+    <select id="manualMood">
+      <option value="">Auto Detect</option>
+      <option value="happy">Happy</option>
+      <option value="sad">Sad</option>
+      <option value="angry">Angry</option>
+      <option value="neutral">Neutral</option>
+      <option value="surprise">Surprise</option>
+    </select>
+  </div>
+
+  <iframe id="music-player" width="400" height="200" allow="autoplay; clipboard-write; encrypted-media;"></iframe>
+
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

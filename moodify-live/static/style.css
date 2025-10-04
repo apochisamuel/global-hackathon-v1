@@ -1,0 +1,19 @@
+.controls {
+  margin: 20px auto;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  align-items: center;
+}
+
+select {
+  background-color: #1f2937;
+  color: white;
+  border: 1px solid #22c55e;
+  padding: 5px 10px;
+  border-radius: 6px;
+}
+
+select:hover {
+  border-color: #86efac;
+}
