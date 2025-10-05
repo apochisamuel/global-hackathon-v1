@@ -1,5 +1,5 @@
 Flask==2.2.5
 deepface==0.0.93
 numpy==1.26.4  
-opencv-python-headless==4.7.0.72  # Compatible with numpy 1.x
+opencv-python-headless==4.7.0.72
 tensorflow-cpu==2.14.0

@@ -179,7 +179,7 @@ def analyze():
 if DEEPFACE_AVAILABLE:
     try:
         print("⏳ Pre-building DeepFace emotion model...")
-        # emotion_model = DeepFace.build_model("Emotion")  # just the model name
+        DeepFace.build_model("Emotion")
         print("✅ DeepFace emotion model ready.")
     except Exception as e:
         print("⚠️ Could not pre-build DeepFace model:", e)
