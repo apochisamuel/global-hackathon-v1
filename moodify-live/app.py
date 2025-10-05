@@ -178,12 +178,11 @@ def analyze():
 # Prebuild DeepFace model on startup (optional)
 if DEEPFACE_AVAILABLE:
     try:
-        print("⏳ Pre-building DeepFace emotion model (this may take a moment)...")
-        DeepFace.build_model("Emotion")
+        print("⏳ Pre-building DeepFace emotion model...")
+        # emotion_model = DeepFace.build_model("Emotion")  # just the model name
         print("✅ DeepFace emotion model ready.")
     except Exception as e:
         print("⚠️ Could not pre-build DeepFace model:", e)
-        traceback.print_exc()
 else:
     print("ℹ️ DeepFace not available — emotion detection will default to 'neutral' for demo.")
 
