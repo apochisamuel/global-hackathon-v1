@@ -1,6 +1,6 @@
-flask
-deepface
-opencv-python
-tensorflow
-requests
+Flask==2.2.5
+deepface==0.0.93
 numpy
+opencv-python-headless
+tensorflow-cpu==2.14.0
+requests

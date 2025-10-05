@@ -4,7 +4,6 @@
   {"id":"happy3","title":"Sunny Groove 2","artist":"Local Artist","file":"happy3.mp3","moods":["happy"]},
   {"id":"sad1","title":"Soft Rain","artist":"Local Artist","file":"sad1.mp3","moods":["sad","fear"]},
   {"id":"sad2","title":"Soft Rain","artist":"Local Artist","file":"sad2.mp3","moods":["sad","fear"]},
-  {"id":"sad3","title":"Soft Rain","artist":"Local Artist","file":"sad3.mp3","moods":["sad","fear"]},
   {"id":"neutral1","title":"Calm Pulse","artist":"Local Artist","file":"neutral1.mp3","moods":["neutral"]},
   {"id":"neutral2","title":"Calm Pulse","artist":"Local Artist","file":"neutral2.mp3","moods":["neutral"]},
   {"id":"neutral3","title":"Calm Pulse","artist":"Local Artist","file":"neutral3.mp3","moods":["neutral"]},
