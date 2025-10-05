@@ -1,12 +1,15 @@
 # app.py
 import os
-import time
 import json
 import base64
 import tempfile
 import traceback
-from flask import Flask, render_template, request, jsonify
-from deepface import DeepFace
+from flask import Flask, render_template, request, jsonify, url_for
+try:
+    from deepface import DeepFace
+    DEEPFACE_AVAILABLE = True
+except Exception:
+    DEEPFACE_AVAILABLE = False
 
 app = Flask(__name__)
 
@@ -22,21 +25,54 @@ except Exception as e:
     print("❌ Could not load tracks manifest:", e)
     TRACKS_MANIFEST = []
 
-def get_local_tracks_for_mood(mood, limit=6):
-    """Return list of local tracks matching mood (files are served from /static/samples/)."""
+# Normalizer & validator
+def normalize_and_validate_manifest(manifest, static_folder):
+    fixed = []
+    warnings = []
+    for entry in manifest:
+        e = dict(entry)
+        moods = e.get("moods", [])
+        if isinstance(moods, str):
+            moods_list = [m.strip().lower() for m in moods.split(',') if m.strip()]
+        elif isinstance(moods, list):
+            moods_list = [str(m).strip().lower() for m in moods if str(m).strip()]
+        else:
+            moods_list = []
+        e['moods'] = moods_list
+
+        raw_file = e.get("file", "")
+        candidate = None
+        if raw_file:
+            if raw_file.startswith("http://") or raw_file.startswith("https://"):
+                candidate = None
+            elif raw_file.startswith("/"):
+                rel = raw_file.lstrip("/")
+                if rel.startswith("static/"):
+                    rel = rel[len("static/"):]
+                candidate = os.path.join(static_folder, rel)
+            else:
+                candidate = os.path.join(static_folder, "samples", raw_file)
+
+            if candidate and not os.path.exists(candidate):
+                warnings.append(f"Missing file for manifest entry id={e.get('id')}: expected {candidate}")
+
+        fixed.append(e)
+    return fixed, warnings
+
+TRACKS_MANIFEST, manifest_warnings = normalize_and_validate_manifest(TRACKS_MANIFEST, app.static_folder)
+for w in manifest_warnings:
+    print("⚠️ manifest warning:", w)
+
+def get_local_tracks_for_mood(mood, limit=2):
     mood = (mood or "neutral").lower()
-    # prefer exact mood tag matches
     matches = [t for t in TRACKS_MANIFEST if mood in [m.lower() for m in t.get("moods", [])]]
-    # if not enough, include neutral tracks
     if len(matches) < limit:
         neutral = [t for t in TRACKS_MANIFEST if "neutral" in [m.lower() for m in t.get("moods", [])]]
-        # append neutral only those not already in matches
         for n in neutral:
             if n not in matches:
                 matches.append(n)
             if len(matches) >= limit:
                 break
-    # if still not enough, return the first N tracks
     if len(matches) < limit:
         for t in TRACKS_MANIFEST:
             if t not in matches:
@@ -44,29 +80,41 @@ def get_local_tracks_for_mood(mood, limit=6):
             if len(matches) >= limit:
                 break
 
-    # format response objects
     out = []
     seen = set()
     for t in matches[:limit]:
         tid = t.get("id") or t.get("file")
-        if tid in seen: 
+        if tid in seen:
             continue
         seen.add(tid)
+        raw_file = t.get("file", "")
+        if raw_file.startswith("http://") or raw_file.startswith("https://") or raw_file.startswith("/"):
+            file_url = raw_file
+        else:
+            try:
+                file_url = url_for('static', filename=f"samples/{raw_file}")
+            except Exception:
+                file_url = f"/static/samples/{raw_file}"
         out.append({
             "id": tid,
             "title": t.get("title", "Unknown"),
             "artist": t.get("artist", "Local"),
-            # file field is local path (browser will request http://host/static/samples/...)
-            "file": t.get("file"),
+            "file": file_url,
         })
     return out
 
+@app.route("/get_local_tracks")
+def get_local_tracks():
+    mood = request.args.get("mood")
+    tracks = get_local_tracks_for_mood(mood)
+    return jsonify({"tracks": tracks})
+
 def detect_emotion_from_base64(image_b64):
-    """Decode base64, write temporary image file, call DeepFace.analyze and return dominant_emotion."""
+    if not DEEPFACE_AVAILABLE:
+        return "neutral"
     try:
         if not image_b64:
             return "neutral"
-        # image_b64 may be "data:image/jpeg;base64,...."
         if "," in image_b64:
             _, encoded = image_b64.split(",", 1)
         else:
@@ -77,9 +125,7 @@ def detect_emotion_from_base64(image_b64):
             tf.write(img_bytes)
             tf.flush()
             tf.close()
-            # DeepFace works well with a file path
             result = DeepFace.analyze(img_path=tf.name, actions=["emotion"], enforce_detection=False)
-            # DeepFace.analyze may return list or dict depending on version
             emo = "neutral"
             if isinstance(result, list) and len(result) > 0:
                 emo = result[0].get("dominant_emotion", "neutral")
@@ -102,13 +148,13 @@ def index():
 
 @app.route("/analyze", methods=["POST"])
 def analyze():
-    """Receive {image: base64, manual: optional override, mode: match|lift} and return local tracks."""
     try:
         data = request.get_json(force=True)
         image_data = data.get("image")
         manual = data.get("manual")
         mode = data.get("mode", "match")
-        print("🟢 /analyze called — manual:", manual, "mode:", mode, "image_len:", len(image_data) if image_data else 0)
+        image_len = len(image_data) if isinstance(image_data, str) else (0 if image_data is None else 1)
+        print("🟢 /analyze called — manual:", manual, "mode:", mode, "image_len:", image_len)
 
         if manual and isinstance(manual, str) and manual.strip() != "":
             mood = manual.strip().lower()
@@ -121,7 +167,7 @@ def analyze():
                 mood = mapping.get(mood, mood)
                 print("🟢 After lift mapping mood:", mood)
 
-        tracks = get_local_tracks_for_mood(mood, limit=6)
+        tracks = get_local_tracks_for_mood(mood, limit=2)
         print(f"🟢 Returning {len(tracks)} local tracks for mood '{mood}'")
         return jsonify({"emotion": mood, "tracks": tracks})
     except Exception as e:
@@ -129,14 +175,17 @@ def analyze():
         traceback.print_exc()
         return jsonify({"error": str(e)}), 500
 
-# Prebuild DeepFace model on startup
-try:
-    print("⏳ Pre-building DeepFace emotion model (this may take a moment)...")
-    DeepFace.build_model("Emotion")
-    print("✅ DeepFace emotion model ready.")
-except Exception as e:
-    print("⚠️ Could not pre-build DeepFace model:", e)
-    traceback.print_exc()
+# Prebuild DeepFace model on startup (optional)
+if DEEPFACE_AVAILABLE:
+    try:
+        print("⏳ Pre-building DeepFace emotion model (this may take a moment)...")
+        DeepFace.build_model("Emotion")
+        print("✅ DeepFace emotion model ready.")
+    except Exception as e:
+        print("⚠️ Could not pre-build DeepFace model:", e)
+        traceback.print_exc()
+else:
+    print("ℹ️ DeepFace not available — emotion detection will default to 'neutral' for demo.")
 
 if __name__ == "__main__":
     app.run(debug=True)

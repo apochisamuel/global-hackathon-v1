@@ -1,15 +1,15 @@
 [
-  {"id":"happy1","title":"Sunny Groove","artist":"Local Artist","file":"/static/samples/happy1.mp3","moods":["happy"]},
-  {"id":"happy2","title":"Bright Day","artist":"Local Artist","file":"/static/samples/happy2.mp3","moods":["happy"]},
-  {"id":"happy3","title":"Sunny Groove 2","artist":"Local Artist","file":"/static/samples/happy3.mp3","moods":["happy"]},
-  {"id":"sad1","title":"Soft Rain","artist":"Local Artist","file":"/static/samples/sad1.mp3","moods":["sad"]},
-  {"id":"sad2","title":"Soft Rain","artist":"Local Artist","file":"/static/samples/sad2.mp3","moods":["sad"]},
-  {"id":"sad3","title":"Soft Rain","artist":"Local Artist","file":"/static/samples/sad3.mp3","moods":["sad"]},
-  {"id":"neutral1","title":"Calm Pulse","artist":"Local Artist","file":"/static/samples/neutral1.mp3","moods":["neutral"]},
-  {"id":"neutral2","title":"Calm Pulse","artist":"Local Artist","file":"/static/samples/neutral2.mp3","moods":["neutral"]},
-  {"id":"neutral3","title":"Calm Pulse","artist":"Local Artist","file":"/static/samples/neutral3.mp3","moods":["neutral"]},
-  {"id":"angry1","title":"Rock Charge","artist":"Local Artist","file":"/static/samples/angry1.mp3","moods":["angry"]},
-  {"id":"angry2","title":"Rock Charge","artist":"Local Artist","file":"/static/samples/angry2.mp3","moods":["angry"]},
-  {"id":"angry3","title":"Rock Charge","artist":"Local Artist","file":"/static/samples/angry3.mp3","moods":["angry"]},
-  {"id":"mix1","title":"Lifted","artist":"Local Artist","file":"/static/samples/lift1.mp3","moods":["happy","surprise"]}
+  {"id":"happy1","title":"Sunny Groove","artist":"Local Artist","file":"happy1.mp3","moods":["happy","surprise"]},
+  {"id":"happy2","title":"Bright Day","artist":"Local Artist","file":"happy2.mp3","moods":["happy","surprise"]},
+  {"id":"happy3","title":"Sunny Groove 2","artist":"Local Artist","file":"happy3.mp3","moods":["happy"]},
+  {"id":"sad1","title":"Soft Rain","artist":"Local Artist","file":"sad1.mp3","moods":["sad","fear"]},
+  {"id":"sad2","title":"Soft Rain","artist":"Local Artist","file":"sad2.mp3","moods":["sad","fear"]},
+  {"id":"sad3","title":"Soft Rain","artist":"Local Artist","file":"sad3.mp3","moods":["sad","fear"]},
+  {"id":"neutral1","title":"Calm Pulse","artist":"Local Artist","file":"neutral1.mp3","moods":["neutral"]},
+  {"id":"neutral2","title":"Calm Pulse","artist":"Local Artist","file":"neutral2.mp3","moods":["neutral"]},
+  {"id":"neutral3","title":"Calm Pulse","artist":"Local Artist","file":"neutral3.mp3","moods":["neutral"]},
+  {"id":"angry1","title":"Rock Charge","artist":"Local Artist","file":"angry1.mp3","moods":["angry"]},
+  {"id":"angry2","title":"Rock Charge","artist":"Local Artist","file":"angry2.mp3","moods":["angry"]},
+  {"id":"angry3","title":"Rock Charge","artist":"Local Artist","file":"angry3.mp3","moods":["angry"]},
+  {"id":"mix1","title":"Lifted","artist":"Local Artist","file":"lift1.mp3","moods":["happy","surprise"]}
 ]
