@@ -89,6 +89,7 @@ async function unlockAudioGesture() {
   }
 }
 
+
 function removeGestureListeners() {
   ['pointerdown','touchstart','click','keydown'].forEach(ev => {
     document.removeEventListener(ev, boundUnlock, {passive:true});
@@ -106,9 +107,16 @@ const boundUnlock = (ev) => {
 });
 
 // start button also calls unlock
-startBtn.addEventListener('click', async () => {
-  try { await unlockAudioGesture(); } catch(e){ console.warn(e); }
-});
+document.getElementById('startBtn').addEventListener('click', async () => {
+    console.log("Start button clicked — bootstrapping happy track...");
+    try {
+        await commitStableMoodAndQueue('neutral', { force: true });
+        await playNextWithCrossfade(); // start playback immediately
+        console.log("Happy track added and playback started!");
+    } catch (err) {
+        console.error("Failed to enqueue/play happy track:", err);
+    }
+}, { once: true }); // only run once
 
 // camera + detection startup
 navigator.mediaDevices.getUserMedia({ video: true })
